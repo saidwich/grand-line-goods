@@ -1,6 +1,9 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import Hero from "@/components/Hero";
+import ProductCard from "@/components/ProductCard";
+import WantedPoster from "@/components/WantedPoster";
 
 type SearchParams = Promise<{ category?: string }>;
 
@@ -8,19 +11,21 @@ async function Filters({ searchParams }: { searchParams: SearchParams }) {
   const { category } = await searchParams;
   const categories = await prisma.category.findMany({ orderBy: { name: "asc" } });
 
-  const base = "rounded-full border px-4 py-1 text-sm";
-  const active = "bg-black text-white";
+  const base =
+    "border-2 border-ink px-5 py-1.5 font-mono text-xs uppercase tracking-widest transition-colors";
+  const active = "bg-ink text-paper";
+  const idle = "hover:bg-ink/10";
 
   return (
-    <div className="mb-6 flex flex-wrap gap-2">
-      <Link href="/" className={`${base} ${!category ? active : ""}`}>
+    <div className="mb-10 flex flex-wrap gap-3">
+      <Link href="/#shop" className={`${base} ${!category ? active : idle}`}>
         All
       </Link>
       {categories.map((c) => (
         <Link
           key={c.id}
-          href={`/?category=${c.slug}`}
-          className={`${base} ${category === c.slug ? active : ""}`}
+          href={`/?category=${c.slug}#shop`}
+          className={`${base} ${category === c.slug ? active : idle}`}
         >
           {c.name}
         </Link>
@@ -37,40 +42,61 @@ async function ProductGrid({ searchParams }: { searchParams: SearchParams }) {
     orderBy: { createdAt: "desc" },
   });
 
-  if (products.length === 0) return <p>No products found.</p>;
+  if (products.length === 0) return <p>Nothing pinned to the board yet.</p>;
 
   return (
-    <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
-      {products.map((p) => (
-        <Link
+    <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4">
+      {products.map((p, i) => (
+        <ProductCard
           key={p.id}
-          href={`/products/${p.slug}`}
-          className="rounded-lg border p-3 transition hover:shadow-md"
-        >
-          <img src={p.image} alt={p.name} className="mb-3 w-full rounded" />
-          <p className="text-xs text-gray-500">{p.category.name}</p>
-          <h2 className="font-semibold">{p.name}</h2>
-          <p className="font-bold">${(p.priceCents / 100).toFixed(2)}</p>
-        </Link>
+          index={i}
+          product={{
+            slug: p.slug,
+            name: p.name,
+            priceCents: p.priceCents,
+            image: p.image,
+            stock: p.stock,
+            category: { name: p.category.name, slug: p.category.slug },
+          }}
+        />
       ))}
     </div>
   );
 }
 
+async function FeaturedPoster() {
+  const products = await prisma.product.findMany({
+    where: { stock: { gt: 0 }, NOT: { image: "/placeholder.svg" } },
+    orderBy: { createdAt: "desc" },
+    take: 5,
+    select: { id: true, slug: true, name: true, priceCents: true, image: true },
+  });
+
+  return <WantedPoster featured={products} />;
+}
+
 export default function Home({ searchParams }: { searchParams: SearchParams }) {
   return (
-    <main className="mx-auto max-w-6xl p-6">
-      <section className="mb-10 rounded-2xl bg-[#1e3a5f] px-6 py-14 text-center text-white">
-        <p className="mb-2 text-sm uppercase tracking-widest text-[#f5c542]">Set sail for treasure</p>
-        <h1 className="mb-3 text-4xl font-bold md:text-5xl">Grand Line Goods</h1>
-        <p className="mx-auto max-w-xl text-gray-200">
-          Figures, apparel, posters and accessories for pirates at heart.
-        </p>
+    <main>
+      <Hero
+        poster={
+          <Suspense fallback={<WantedPoster />}>
+            <FeaturedPoster />
+          </Suspense>
+        }
+      />
+      <section id="shop" className="mx-auto max-w-6xl scroll-mt-24 px-4 pb-8 md:px-6">
+        <div className="mb-8 flex items-end justify-between border-b-4 border-ink pb-3">
+          <h2 className="font-display text-5xl uppercase leading-none md:text-7xl">The Loot</h2>
+          <p className="hidden font-mono text-xs uppercase tracking-widest md:block">
+            Pinned fresh from the Grand Line
+          </p>
+        </div>
+        <Suspense fallback={<p className="font-mono text-sm">Unrolling posters...</p>}>
+          <Filters searchParams={searchParams} />
+          <ProductGrid searchParams={searchParams} />
+        </Suspense>
       </section>
-      <Suspense fallback={<p>Loading...</p>}>
-        <Filters searchParams={searchParams} />
-        <ProductGrid searchParams={searchParams} />
-      </Suspense>
     </main>
   );
 }

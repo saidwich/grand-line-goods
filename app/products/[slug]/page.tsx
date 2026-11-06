@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import AddToCartButton from "@/components/AddToCartButton";
+import ProductImage from "@/components/ProductImage";
 
 async function ProductDetail({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -15,14 +16,20 @@ async function ProductDetail({ params }: { params: Promise<{ slug: string }> }) 
 
   return (
     <div className="grid gap-8 md:grid-cols-2">
-      <img src={product.image} alt={product.name} className="w-full rounded-lg border" />
+      <ProductImage
+        image={product.image}
+        name={product.name}
+        category={product.category.slug}
+        color
+        className="border-2 border-ink shadow-[0_25px_40px_-25px_rgba(20,17,15,0.7)]"
+        />
       <div>
         <p className="text-sm text-gray-500">
           {product.category.name}
           {product.crew ? ` · ${product.crew}` : ""}
         </p>
-        <h1 className="mb-2 text-3xl font-bold">{product.name}</h1>
-        <p className="mb-4 text-2xl font-bold">${(product.priceCents / 100).toFixed(2)}</p>
+        <h1 className="mb-2 font-display text-6xl uppercase leading-none">{product.name}</h1>
+        <p className="mb-4 font-display text-5xl text-vermilion">${(product.priceCents / 100).toFixed(2)}</p>
         <p className="mb-6 text-gray-700">{product.description}</p>
         <p className="mb-4 text-sm">
           {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}

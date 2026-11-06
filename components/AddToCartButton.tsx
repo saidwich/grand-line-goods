@@ -35,7 +35,7 @@ export default function AddToCartButton({ product }: Props) {
     <button
       onClick={handleClick}
       disabled={product.stock === 0}
-      className="rounded bg-black px-6 py-3 text-white disabled:opacity-50"
+      className="bg-ink px-10 py-4 font-display text-xl uppercase tracking-wide text-paper transition-colors hover:bg-vermilion active:scale-95 disabled:opacity-50"
     >
       {added ? "Added ✓" : "Add to cart"}
     </button>
