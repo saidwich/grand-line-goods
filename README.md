@@ -5,7 +5,7 @@ A full-stack, pirate-themed merch store built as a portfolio project. It has a p
 **Live demo:** https://grand-line-goods.vercel.app/
 **Author:** [Darrel Cedric Cirineo](https://github.com/saidwich)
 
-![Homepage](screenshots/home.png)
+![Homepage](screenshots/home.PNG)
 
 > **Fan project.** Not for sale and not affiliated with any official brand. All product names are fictional.
 
@@ -15,11 +15,11 @@ A full-stack, pirate-themed merch store built as a portfolio project. It has a p
 
 | Product page | Cart |
 | --- | --- |
-| ![Product page](screenshots/product.png) | ![Cart](screenshots/cart.png) |
+| ![Product page](screenshots/product.PNG) | ![Cart](screenshots/cart.PNG) |
 
 | Admin dashboard | Checkout (Stripe test mode) |
 | --- | --- |
-| ![Admin](screenshots/admin.png) | ![Checkout](screenshots/checkout.png) |
+| ![Admin](screenshots/admin.PNG) | ![Checkout](screenshots/checkout.PNG) |
 
 ---
 
