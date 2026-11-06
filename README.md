@@ -110,7 +110,7 @@ cp .env.example .env
 | `DATABASE_URL` | Neon Postgres connection string |
 | `SESSION_SECRET` | Random 64-character hex string (see below) |
 | `STRIPE_SECRET_KEY` | Stripe sandbox secret key (`sk_test_...`) |
-| `APP_URL` | `http://localhost:3000` locally, your Vercel URL in production |
+| `APP_URL` | `http://localhost:3000` locally, https://grand-line-goods.vercel.app |
 
 Generate a session secret:
 
@@ -128,7 +128,6 @@ npm run dev
 
 Open http://localhost:3000.
 
-> **Warning:** `npx prisma db seed` deletes all products and orders before re-adding the sample data. It also creates a demo admin account, so change that password before deploying.
 
 ---
 
